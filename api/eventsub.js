@@ -2,10 +2,14 @@ export default async function handler(req, res) {
   try {
     // Vérification EventSub (challenge Twitch)
     if (req.headers["twitch-eventsub-message-type"] === "webhook_callback_verification") {
-      return res.status(200).send(req.body.challenge);
+      return res.status(200).send(req.body?.challenge);
     }
 
-    // Si Twitch envoie un event normal
+    // Protection : si pas de body → éviter crash
+    if (!req.body) {
+      return res.status(200).json({ ok: true, info: "No body received" });
+    }
+
     const event = req.body.event;
 
     // Protection : si pas d'event → éviter crash
@@ -31,16 +35,13 @@ export default async function handler(req, res) {
       })
     });
 
-    // Vérifier si Supabase a accepté
     if (!response.ok) {
       const error = await response.text();
-      console.error("Supabase error:", error);
       return res.status(500).json({ ok: false, error });
     }
 
     return res.status(200).json({ ok: true });
   } catch (err) {
-    console.error("Server error:", err);
     return res.status(500).json({ ok: false, error: err.message });
   }
 }
