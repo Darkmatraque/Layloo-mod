@@ -1,0 +1,30 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8">
+  <title>Détails utilisateur</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+</head>
+
+<body class="bg-gray-900 text-white min-h-screen p-10">
+  <a href="index.html" class="text-blue-400 underline">← Retour</a>
+  <h1 id="title" class="text-3xl font-bold mb-6"></h1>
+
+  <div id="details"></div>
+
+  <script src="data.js"></script>
+  <script>
+    const params = new URLSearchParams(window.location.search);
+    const id = params.get("id");
+    const user = users.find(u => u.id == id);
+
+    document.getElementById("title").textContent = "Détails de " + user.pseudo;
+
+    document.getElementById("details").innerHTML = `
+      <p class="mb-2">Messages supprimés : ${user.msgDeleted}</p>
+      <p class="mb-2">Timeouts : ${user.timeouts}</p>
+      <p class="mb-2">Ban définitif : ${user.banDef ? "Oui" : "Non"}</p>
+    `;
+  </script>
+</body>
+</html>
